@@ -1,59 +1,34 @@
-import React, { Fragment } from "react";
+import React, { Fragment, Component } from "react";
 import { Card } from "../../components/card";
+import axios from "axios";
 
-const recipes = [
-  {
-    id: 1,
-    title: "Batata belga",
-    description: "Uma boa batata",
-    imageUrl:
-      "https://static.baratocoletivo.com.br/2017/0622/10012991/g_allfry-c4bbebed11.jpg",
-    ingredients: "Batata, óleo, sal."
-  },
-  {
-    id: 2,
-    title: "Batata belga",
-    description: "Uma boa batata",
-    imageUrl:
-      "https://static.baratocoletivo.com.br/2017/0622/10012991/g_allfry-c4bbebed11.jpg",
-    ingredients: "Batata, óleo, sal."
-  },
-  {
-    id: 3,
-    title: "Batata belga",
-    description: "Uma boa batata",
-    imageUrl:
-      "https://static.baratocoletivo.com.br/2017/0622/10012991/g_allfry-c4bbebed11.jpg",
-    ingredients: "Batata, óleo, sal."
-  },
-  {
-    id: 4,
-    title: "Batata belga",
-    description: "Uma boa batata",
-    imageUrl:
-      "https://static.baratocoletivo.com.br/2017/0622/10012991/g_allfry-c4bbebed11.jpg",
-    ingredients: "Batata, óleo, sal."
-  },
-  {
-    id: 5,
-    title: "Batata belga",
-    description: "Uma boa batata",
-    imageUrl:
-      "https://static.baratocoletivo.com.br/2017/0622/10012991/g_allfry-c4bbebed11.jpg",
-    ingredients: "Batata, óleo, sal."
-  },
-  {
-    id: 6,
-    title: "Batata belga",
-    description: "Uma boa batata",
-    imageUrl:
-      "https://static.baratocoletivo.com.br/2017/0622/10012991/g_allfry-c4bbebed11.jpg",
-    ingredients: "Batata, óleo, sal."
+export default class List extends Component {
+  state = {
+    recipes: []
+  };
+
+  componentDidMount() {
+    axios.get("http://localhost:4000/food", {
+      headers: { Authorization: "Bearer " + this.props.token }
+  }).then(content => {
+      const { data } = content;
+      this.setState({ recipes: data });
+    });
   }
-];
-const List = () => (
-  <Fragment>
-    {recipes.map(recipe => <Card key={recipe.id} {...recipe} />)}
-  </Fragment>
-);
-export { List };
+
+  render() {
+    const newList =
+      this.props.term === ""
+        ? this.state.recipes
+        : this.state.recipes.filter(recipe =>
+            recipe.title.toLowerCase().includes(this.props.term.toLowerCase())
+          );
+    return (
+      <Fragment>
+        {newList.map(recipe => (
+          <Card key={recipe.id} {...recipe} />
+        ))}
+      </Fragment>
+    );
+  }
+}

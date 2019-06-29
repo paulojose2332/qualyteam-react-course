@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 
 const server = jsonServer.create();
 const router = jsonServer.router(path.join(__dirname,"./db.json") );
-const userdb = JSON.parse(fs.readFileSync( path.join(__dirname,"./users.json"), "UTF-8"));
+const userdb = JSON.parse(fs.readFileSync( path.join(__dirname,"./src/users.json"), "UTF-8"));
 const SECRET_KEY = "123456789";
 const expiresIn = "1h";
 

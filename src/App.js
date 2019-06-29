@@ -1,38 +1,67 @@
-import React, { Fragment } from "react";
+import React, { Component, Fragment } from "react";
 import "./App.scss";
 import { Navbar } from "./components/navbar";
 import { Login } from "./pages/login";
-import { Register } from "./pages/register";
-import { List } from "./pages/list";
-import { Recipe } from "./components/Recipe";
+import Register from "./pages/register";
+import List from "./pages/list";
+import Recipe from "./components/Recipe";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect
+} from "react-router-dom";
 
-const recipe = {
-  id: 6,
-  title: "Batata belga",
-  description: "Uma boa batata",
-  imageUrl:
-    "https://static.baratocoletivo.com.br/2017/0622/10012991/g_allfry-c4bbebed11.jpg",
-  ingredients: "Batata, óleo, sal.",
-  preparo: "Coloque tudo na fritadeira e uhaaa!"
-};
+import history from "history";
+import Axios from "axios";
+//import user from "./users.json";
 
-function App() {
-  return (
-    <div className="app">
-      {true ? (
-        <Fragment>
-          <Navbar />
-          <main className="content--container">
-            <List />
-            {/* <Recipe {...recipe} /> */}
-            {/* <Register /> */}
-          </main>
-        </Fragment>
-      ) 
-      :(<Login /> )
-      }
-    </div>
-  );
+export default class App extends Component {
+  state = {
+    term: "",
+    token: ""
+  };
+
+  // onSubmit(e){
+  //   Axios.post("http://localhost:4000/auth/login", {
+  //      email: email,
+  //      password: password
+  //   }).then(content => this.setState({ token: content.data.access_token }));
+  // }
+  // componentDidMount() {
+  //    Axios.post("http://localhost:4000/auth/login", {
+  //   //   email: email,
+  //   //   password: password
+  //   }).then(content => this.setState({ token: content.data.access_token }));
+  // }
+
+  render() {
+    return (
+      <Router>
+        <div className="app">
+          {localStorage.getItem("token") != '' ? (
+            <Fragment>
+              <Navbar
+                onChange={e => {
+                  this.setState({ term: e.target.value });
+                }}
+              />
+              <main className="content--container">
+                <Route exact path="/" render={() => <List {...this.state} />} />
+                <Route
+                  exact
+                  path="/food/:id"
+                  render={props => <Recipe {...props} />}
+                />
+                <Route exact path="/register" component={Register} />
+              </main>
+            </Fragment>
+          ) : (
+            <Login onSubmit={e => this.setState({token: e.target.value})}/>
+          )}
+        </div>
+      </Router>
+    );
+  }
 }
-
-export default App;
